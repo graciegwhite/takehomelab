@@ -1,0 +1,73 @@
+---
+title: "Salmon"
+author: "Gracie White"
+date: "November 21, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Part 1 - Load packages and Read Data
+```{r, echo=FALSE}
+library(tidyverse)
+
+salmon <- read_csv("salmon_imports copy.csv")
+
+```
+#Part 2. Exploratory Scatterplot
+
+```{r}
+salmon_plot <- ggplot(salmon, aes(x = year, y = salmon_fresh)) + 
+  geom_point()
+salmon_plot
+
+
+##Overall, this looks fairly linear apart a few instances. I have concerns about extrapolting more than a few years into the future, and would like to know if there are certain events that led to the variations in 2004 and 2014?
+```
+#Part 3 - linear regression 
+
+```{r}
+salmon_model <- lm(salmon_fresh ~ year, data = salmon)
+salmon_model
+
+#Intercept: -14,982,940
+#y=-14,982,940 + 7550x + Error
+
+# Imports(ton) = 7750(year)+ -14,982,940
+
+#Every year, salm imports increase by approximately 7550 tons. (slope)
+#At year zero, imports would = -14,982,940, which is impossible, so we can't extrapolate that far.
+
+
+
+```
+#part 4 - Model Diagnostics 
+
+```{r}
+plot(salmon_model)
+#residuals appear mostly normal, but maybe with a slight increase in recent years (showin the residuals vs fitted plot). QQ plot shows a couple outliers. 
+
+par(mfrow = c(2,2))
+plot(salmon_model)
+```
+#Part 5 - Model fit and significance
+
+```{r}
+summary(salmon_model)
+
+#year does significantly predict salmon imports within the scope of our model. Imports can be predicted 95% of the time by our model. 5% of our data is not explained by our model. 
+```
+
+#Part 6 - a final graph!
+
+```{r}
+salmon_final_graph <- ggplot(salmon, aes(x = year, y = salmon_fresh)) +
+  geom_point + 
+  geom_smooth(method = lm, se = TRUE, size = 0.5, color = "gray20") +
+  theme_bw() +
+  scale_x_continuous(expand = c(0,0), limits = c(1990, 2017)) 
+salmon_final_graph
+```
+
