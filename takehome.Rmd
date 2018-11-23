@@ -64,10 +64,34 @@ summary(salmon_model)
 
 ```{r}
 salmon_final_graph <- ggplot(salmon, aes(x = year, y = salmon_fresh)) +
-  geom_point + 
-  geom_smooth(method = lm, se = TRUE, size = 0.5, color = "gray20") +
+  geom_point() +
+ geom_smooth(method = lm, se = TRUE, size = 0.5, color = "gray20") +
   theme_bw() +
-  scale_x_continuous(expand = c(0,0), limits = c(1990, 2017)) 
+  scale_x_continuous(expand = c(0,0), limits = c(1990, 2017)) + 
+  labs(x = "Year", y = "U.S. Annual Fresh Salmon Imports\n(1,000 pounds)")
 salmon_final_graph
+  
 ```
+#Part 7 - Predictions!
 
+```{r}
+new_years <- data.frame(year = c(2022, 2024, 2026, 2028))
+future_predict <- predict(salmon_model, newdata = new_years, interval = "confidence")
+future_predict
+
+predictions <- data.frame(new_years, future_predict)
+predictions
+
+
+```
+#Part 8 - Pearson's r
+
+```{r}
+salmon_cortest <- cor.test(salmon$year, salmon$salmon_fresh)
+salmon_cortest
+
+#Pearson's r = 0.973
+#A strong correlation
+
+```
+#The model (Imports(ton) = 7750(year)+ -14,982,940) explains a significant amount of variance in fresh salmon imports (*p* < 0.0001, R^2^ = 0.95, Pearson's *r* = 0.97). There is a storng postive crrelation between the variables, although caution should be used when extrapolating. 
